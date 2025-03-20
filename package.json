@@ -1,0 +1,25 @@
+{
+  "name": "practice2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "jsx": "react",
+  "author": "sam",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.26.4",
+    "@babel/core": "^7.26.9",
+    "@babel/preset-react": "^7.26.3",
+    "babel": "^6.23.0",
+    "express.js": "^1.0.0",
+    "preact": "^10.26.2",
+    "preact-render-to-string": "^6.5.13",
+    "pug": "^3.0.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

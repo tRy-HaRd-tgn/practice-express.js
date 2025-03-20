@@ -1,0 +1,90 @@
+import express from "express";
+webPreferences: {
+  nodeIntegration: true;
+}
+import * as fs from "fs";
+import * as readline from "readline";
+import { data } from "./data/index.js";
+let appPath = process.argv[1];
+
+function errase(appPath) {
+  for (let i = appPath.length - 1; i >= 0; i--) {
+    if (appPath[i] == "\\") {
+      appPath = appPath.slice(0, i + 1);
+      break;
+    }
+  }
+  return appPath;
+}
+appPath = errase(appPath);
+async function createFile(dir) {
+  fs.appendFile(dir, "", function (err) {
+    if (err) throw err;
+    console.log("Saved!");
+  });
+}
+var lineReader = readline.createInterface({
+  input: fs.createReadStream(`result.txt`),
+  crlfDelay: Infinity,
+});
+const app = express();
+var array = [];
+let obj = {
+  name: "",
+  genger: "",
+  age: "",
+  address: "",
+  slyzil: "",
+  category: "",
+  relation: "",
+  mark: 0,
+};
+for await (const line of lineReader) {
+  array.push(line);
+}
+async function main(params) {
+  app.use(express.json());
+  app.use(express.urlencoded());
+  app.set("view engine", "pug");
+  app.get("/", async (req, res) => {
+    res.render("main", { array: data });
+  });
+  app.get("/result", function (req, res) {
+    res.render("result", { array: array });
+  });
+  app.post("/request", async (req, res) => {
+    console.log(req);
+    let i = 0;
+    for (var key in obj) {
+      obj[key] = req.body[i];
+      ++i;
+    }
+    if (
+      obj.relation == "да" ||
+      obj.relation == "обожаю" ||
+      obj.relation == "люблю" ||
+      obj.relation == "поддерживаю" ||
+      obj.relation == "yes"
+    ) {
+      obj["mark"] = 1;
+    } else {
+      obj["mark"] = 0;
+    }
+    console.log(req.body);
+    createFile("result.txt");
+    appPath += "result.txt";
+    fs.appendFile(appPath, JSON.stringify(obj), function (err) {
+      if (err) throw err;
+      console.log("Saved!");
+    });
+    fs.appendFile(appPath, "\n", function (err) {
+      if (err) throw err;
+    });
+    appPath = errase(appPath);
+  });
+  app.listen(3000, () => {
+    console.log("сервер запущен на порте 3000", "http://localhost:3000");
+  });
+}
+
+main();

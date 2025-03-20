@@ -1,0 +1,11 @@
+html(lang="ru")
+  head
+    meta(charset="utf-8")
+    title= 'main'
+    
+  body
+    form(action="http://localhost:3000/request" method="post" enctype="application/x-www-form-urlencoded") 
+        each value,index in array
+            p=value 
+            input(type="text" name=index)
+        button(type="submit")="отправить" 
