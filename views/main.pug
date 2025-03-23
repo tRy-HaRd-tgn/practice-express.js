@@ -4,8 +4,8 @@ html(lang="ru")
     title= 'main'
     
   body
-    form(action="http://localhost:3000/request" method="post" enctype="application/x-www-form-urlencoded") 
+    form(action="http://localhost:3000/request" style='display:flex; flex-direction:column; align-items:center; justify-content:center' method="post" enctype="application/x-www-form-urlencoded") 
         each value,index in array
             p=value 
             input(type="text" name=index)
-        button(type="submit")="отправить" 
+        button(type="submit" style='margin-top:20px')="отправить" 

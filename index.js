@@ -47,10 +47,43 @@ async function main(params) {
   app.use(express.urlencoded());
   app.set("view engine", "pug");
   app.get("/", async (req, res) => {
+    res.render("login");
+  });
+  app.get("/main", async (req, res) => {
     res.render("main", { array: data });
+  });
+  app.get("/register", async (req, res) => {
+    res.render("register");
   });
   app.get("/result", function (req, res) {
     res.render("result", { array: array });
+  });
+  app.post("/register/request", function (req, res) {
+    const obj = {};
+    try {
+      obj.email = req.body.email;
+      obj.password = req.body.password;
+      obj.admin = false;
+      const data = fs.readFileSync("information.txt");
+      console.log(data.toString());
+      if (data === undefined) {
+        fs.appendFileSync("information.txt", JSON.stringify(obj));
+        fs.appendFileSync("information.txt", "\n", function (err) {
+          if (err) throw err;
+        });
+      } else {
+        if (data.toString().includes(obj.email) === false) {
+          fs.appendFileSync("information.txt", JSON.stringify(obj));
+          fs.appendFileSync("information.txt", "\n", function (err) {
+            if (err) throw err;
+          });
+        }
+      }
+      appPath = errase(appPath);
+      res.json({ message: "success" }).status(200);
+    } catch (e) {
+      console.log(e);
+    }
   });
   app.post("/request", async (req, res) => {
     console.log(req);
@@ -81,6 +114,7 @@ async function main(params) {
       if (err) throw err;
     });
     appPath = errase(appPath);
+    res.json({ message: "success" }).status(200);
   });
   app.listen(3000, () => {
     console.log("сервер запущен на порте 3000", "http://localhost:3000");
