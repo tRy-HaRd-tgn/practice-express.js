@@ -6,6 +6,8 @@ import * as fs from "fs";
 import * as readline from "readline";
 import { data } from "./data/index.js";
 let appPath = process.argv[1];
+const auth = false; // флаг отвечающий за авторизацию
+const admin = false; // флаг отвечающий за наличие прав администратора
 
 function errase(appPath) {
   for (let i = appPath.length - 1; i >= 0; i--) {
@@ -65,7 +67,6 @@ async function main(params) {
       obj.password = req.body.password;
       obj.admin = false;
       const data = fs.readFileSync("information.txt");
-      console.log(data.toString());
       if (data === undefined) {
         fs.appendFileSync("information.txt", JSON.stringify(obj));
         fs.appendFileSync("information.txt", "\n", function (err) {
@@ -84,6 +85,19 @@ async function main(params) {
     } catch (e) {
       console.log(e);
     }
+  }); // есть проверка, которая не позваоляет зарегистрароваться ещё одному пользователю по одному и тому же email
+  app.post("/login/request", function (req, res) {
+    console.log(req.body);
+    try {
+      var lineReaderS = readline.createInterface({
+        input: fs.createReadStream(`information.txt`),
+        crlfDelay: Infinity,
+      });
+      lineReaderS.on("line", (line) => console.log(line));
+    } catch (e) {
+      console.log(e);
+    }
+    res.json({ message: "success" }).status(200);
   });
   app.post("/request", async (req, res) => {
     console.log(req);
