@@ -6,8 +6,8 @@ import * as fs from "fs";
 import * as readline from "readline";
 import { data } from "./data/index.js";
 let appPath = process.argv[1];
-const auth = false; // флаг отвечающий за авторизацию
-const admin = false; // флаг отвечающий за наличие прав администратора
+var auth = false; // флаг отвечающий за авторизацию
+var admin = false; // флаг отвечающий за наличие прав администратора
 
 function errase(appPath) {
   for (let i = appPath.length - 1; i >= 0; i--) {
@@ -43,6 +43,9 @@ let obj = {
 };
 for await (const line of lineReader) {
   array.push(line);
+}
+async function authF() {
+  auth = true;
 }
 async function main(params) {
   app.use(express.json());
@@ -86,18 +89,33 @@ async function main(params) {
       console.log(e);
     }
   }); // есть проверка, которая не позваоляет зарегистрароваться ещё одному пользователю по одному и тому же email
-  app.post("/login/request", function (req, res) {
-    console.log(req.body);
+  app.post("/login/request", async function (req, res) {
     try {
       var lineReaderS = readline.createInterface({
         input: fs.createReadStream(`information.txt`),
         crlfDelay: Infinity,
       });
-      lineReaderS.on("line", (line) => console.log(line));
+      lineReaderS.on("line", (line) => {
+        const str = JSON.parse(line);
+
+        if (
+          str.email === req.body.email &&
+          str.password === req.body.password
+        ) {
+          auth = true;
+
+          res.json({ message: "success" }).status(200);
+        }
+      });
+      lineReaderS.on("close", () => {
+        if (auth === false) {
+          res.json({ message: "пользователя не существует" }).status(200);
+        }
+      });
     } catch (e) {
       console.log(e);
+      res.json({ message: "ошибка" }).status(500);
     }
-    res.json({ message: "success" }).status(200);
   });
   app.post("/request", async (req, res) => {
     console.log(req);
