@@ -55,13 +55,17 @@ async function main(params) {
     res.render("login");
   });
   app.get("/main", async (req, res) => {
-    res.render("main", { array: data });
+    if (auth) res.render("main", { array: data });
   });
   app.get("/register", async (req, res) => {
     res.render("register");
   });
   app.get("/result", function (req, res) {
-    res.render("result", { array: array });
+    if (auth && admin) {
+      res.render("result", { array: array });
+    } else {
+      res.json({ message: "у вас недостаточно прав" }).status(500);
+    }
   });
   app.post("/register/request", function (req, res) {
     const obj = {};
@@ -103,17 +107,21 @@ async function main(params) {
           str.password === req.body.password
         ) {
           auth = true;
-
+          admin = str.admin;
           res.json({ message: "success" }).status(200);
         }
       });
       lineReaderS.on("close", () => {
         if (auth === false) {
+          auth = false;
+          admin = false;
           res.json({ message: "пользователя не существует" }).status(200);
         }
       });
     } catch (e) {
       console.log(e);
+      auth = false;
+      admin = false;
       res.json({ message: "ошибка" }).status(500);
     }
   });
@@ -138,11 +146,11 @@ async function main(params) {
     console.log(req.body);
     createFile("result.txt");
     appPath += "result.txt";
-    fs.appendFile(appPath, JSON.stringify(obj), function (err) {
+    fs.appendFileSync(appPath, JSON.stringify(obj), function (err) {
       if (err) throw err;
       console.log("Saved!");
     });
-    fs.appendFile(appPath, "\n", function (err) {
+    fs.appendFileSync(appPath, "\n", function (err) {
       if (err) throw err;
     });
     appPath = errase(appPath);
