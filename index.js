@@ -74,21 +74,16 @@ async function main(params) {
       obj.password = req.body.password;
       obj.admin = false;
       const data = fs.readFileSync("information.txt");
-      if (data === undefined) {
+      if (data?.toString().includes(obj.email) === false) {
         fs.appendFileSync("information.txt", JSON.stringify(obj));
         fs.appendFileSync("information.txt", "\n", function (err) {
           if (err) throw err;
         });
+        res.json({ message: "success" }).status(200);
       } else {
-        if (data.toString().includes(obj.email) === false) {
-          fs.appendFileSync("information.txt", JSON.stringify(obj));
-          fs.appendFileSync("information.txt", "\n", function (err) {
-            if (err) throw err;
-          });
-        }
+        res.json({ message: "пользователь уже существует" }).status(200);
       }
       appPath = errase(appPath);
-      res.json({ message: "success" }).status(200);
     } catch (e) {
       console.log(e);
     }
