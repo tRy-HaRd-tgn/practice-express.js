@@ -6,6 +6,9 @@ import { logRegService } from "./services/logReg.service.js";
 import * as fs from "fs";
 import { data } from "./data/index.js";
 import { LogRegRouter } from "./controller/logReg.controller.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
@@ -13,6 +16,9 @@ async function main(params) {
   app.use(express.json());
   app.use(express.urlencoded());
   app.set("view engine", "pug");
+  app.all("*", function (req, res) {
+    res.status(404).send("404 Not Found");
+  });
   app.get("/", async (req, res) => {
     res.render("login");
   });
@@ -62,8 +68,11 @@ async function main(params) {
     appPath = errase(appPath);
     res.json({ message: "success" }).status(200);
   });
-  app.listen(3000, () => {
-    console.log("сервер запущен на порте 3000", "http://localhost:3000");
+  app.listen(process.env.SERVER_PORT, () => {
+    console.log(
+      `server started on port ${process.env.SERVER_PORT}`,
+      `http://localhost:${process.env.SERVER_PORT}`
+    );
   });
 }
 
