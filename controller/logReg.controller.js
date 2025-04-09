@@ -2,9 +2,7 @@ import { Router } from "express";
 import { LogRegService } from "../services/logReg.service.js";
 import readline from "readline";
 import * as fs from "fs";
-
 const router = Router();
-
 const logRegService = new LogRegService();
 
 router.post("/login/request", async function (req, res) {
@@ -31,10 +29,32 @@ router.post("/login/request", async function (req, res) {
     });
   } catch (e) {
     console.log(e);
-    auth = false;
-    admin = false;
+    logRegService.auth = false;
+    logRegService.admin = false;
     res.json({ message: "ошибка" }).status(500);
   }
 });
+
+router.post("/register/request", async function (req, res) {
+  const obj = {};
+  try {
+    obj.email = req.body.email;
+    obj.password = req.body.password;
+    obj.admin = false;
+    const data = fs.readFileSync("information.txt");
+    if (data?.toString().includes(obj.email) === false) {
+      fs.appendFileSync("information.txt", JSON.stringify(obj));
+      fs.appendFileSync("information.txt", "\n", function (err) {
+        if (err) throw err;
+      });
+      res.json({ message: "success" }).status(200);
+    } else {
+      res.json({ message: "пользователь уже существует" }).status(200);
+    }
+    logRegService.appPath = logRegService.errase(logRegService.appPath);
+  } catch (e) {
+    console.log(e);
+  }
+}); // есть проверка, которая не позволяет зарегистрароваться ещё одному пользователю по одному и тому же email
 
 export const LogRegRouter = router;

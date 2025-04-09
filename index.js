@@ -18,39 +18,19 @@ async function main(params) {
     res.render("login");
   });
   app.get("/main", async (req, res) => {
-    if (auth) res.render("main", { array: data });
+    if (logRegService.auth) res.render("main", { array: data });
   });
   app.get("/register", async (req, res) => {
     res.render("register");
   });
   app.get("/result", function (req, res) {
-    if (auth && admin) {
-      res.render("result", { array: array });
+    if (logRegService.auth && logRegService.admin) {
+      res.render("result", { array: logRegService.array });
     } else {
       res.json({ message: "у вас недостаточно прав" }).status(500);
     }
   });
-  app.post("/register/request", function (req, res) {
-    const obj = {};
-    try {
-      obj.email = req.body.email;
-      obj.password = req.body.password;
-      obj.admin = false;
-      const data = fs.readFileSync("information.txt");
-      if (data?.toString().includes(obj.email) === false) {
-        fs.appendFileSync("information.txt", JSON.stringify(obj));
-        fs.appendFileSync("information.txt", "\n", function (err) {
-          if (err) throw err;
-        });
-        res.json({ message: "success" }).status(200);
-      } else {
-        res.json({ message: "пользователь уже существует" }).status(200);
-      }
-      appPath = errase(appPath);
-    } catch (e) {
-      console.log(e);
-    }
-  }); // есть проверка, которая не позволяет зарегистрароваться ещё одному пользователю по одному и тому же email
+  app.post("/register/request", LogRegRouter);
   app.post("/login/request", LogRegRouter);
   app.post("/request", async (req, res) => {
     let i = 0;
