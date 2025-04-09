@@ -1,6 +1,6 @@
 import * as readline from "readline";
 import * as fs from "fs";
-export class LogRegService {
+class LogRegService {
   errase(appPath) {
     for (let i = appPath.length - 1; i >= 0; i--) {
       if (appPath[i] == "\\") {
@@ -51,3 +51,4 @@ export class LogRegService {
     this.readLines();
   }
 }
+export const logRegService = new LogRegService();

@@ -1,9 +1,8 @@
 import { Router } from "express";
-import { LogRegService } from "../services/logReg.service.js";
+import { logRegService } from "../services/logReg.service.js";
 import readline from "readline";
 import * as fs from "fs";
 const router = Router();
-const logRegService = new LogRegService();
 
 router.post("/login/request", async function (req, res) {
   try {
@@ -17,6 +16,7 @@ router.post("/login/request", async function (req, res) {
       if (str.email === req.body.email && str.password === req.body.password) {
         logRegService.auth = true;
         logRegService.admin = str.admin;
+        console.log(logRegService.auth);
         res.json({ message: "success" }).status(200);
       }
     });

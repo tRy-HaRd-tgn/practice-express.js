@@ -2,13 +2,12 @@ import express from "express";
 webPreferences: {
   nodeIntegration: true;
 }
-import { LogRegService } from "./services/logReg.service.js";
+import { logRegService } from "./services/logReg.service.js";
 import * as fs from "fs";
 import { data } from "./data/index.js";
 import { LogRegRouter } from "./controller/logReg.controller.js";
 
 const app = express();
-const logRegService = new LogRegService();
 
 async function main(params) {
   app.use(express.json());
@@ -18,6 +17,7 @@ async function main(params) {
     res.render("login");
   });
   app.get("/main", async (req, res) => {
+    console.log(logRegService.auth);
     if (logRegService.auth) res.render("main", { array: data });
   });
   app.get("/register", async (req, res) => {
