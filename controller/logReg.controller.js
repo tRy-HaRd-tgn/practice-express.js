@@ -55,6 +55,6 @@ router.post("/register/request", async function (req, res) {
   } catch (e) {
     console.log(e);
   }
-}); // есть проверка, которая не позволяет зарегистрароваться ещё одному пользователю по одному и тому же email
+}); 
 
 export const LogRegRouter = router;
