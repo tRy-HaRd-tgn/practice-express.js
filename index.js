@@ -16,9 +16,7 @@ async function main(params) {
   app.use(express.json());
   app.use(express.urlencoded());
   app.set("view engine", "pug");
-  app.all("*", function (req, res) {
-    res.status(404).send("404 Not Found");
-  });
+
   app.get("/", async (req, res) => {
     res.render("login");
   });
@@ -73,6 +71,9 @@ async function main(params) {
       `server started on port ${process.env.SERVER_PORT}`,
       `http://localhost:${process.env.SERVER_PORT}`
     );
+  });
+  app.all("*", function (req, res) {
+    res.status(404).send("404 Not Found");
   });
 }
 

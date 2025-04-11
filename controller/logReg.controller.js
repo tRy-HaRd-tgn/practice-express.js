@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { logRegService } from "../services/logReg.service.js";
+import { PrismaClient } from "@prisma/client";
 import readline from "readline";
 import * as fs from "fs";
 const router = Router();
+const prisma = new PrismaClient();
 
 router.post("/login/request", async function (req, res) {
   try {
@@ -55,6 +57,6 @@ router.post("/register/request", async function (req, res) {
   } catch (e) {
     console.log(e);
   }
-}); 
+});
 
 export const LogRegRouter = router;
