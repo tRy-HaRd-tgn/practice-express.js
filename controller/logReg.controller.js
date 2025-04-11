@@ -43,17 +43,14 @@ router.post("/register/request", async function (req, res) {
     obj.email = req.body.email;
     obj.password = req.body.password;
     obj.admin = false;
-    const data = fs.readFileSync("information.txt");
-    if (data?.toString().includes(obj.email) === false) {
-      fs.appendFileSync("information.txt", JSON.stringify(obj));
-      fs.appendFileSync("information.txt", "\n", function (err) {
-        if (err) throw err;
-      });
-      res.json({ message: "success" }).status(200);
-    } else {
-      res.json({ message: "пользователь уже существует" }).status(200);
-    }
-    logRegService.appPath = logRegService.errase(logRegService.appPath);
+    const newUser = await prisma.user.create({
+      data: {
+        email: req.body.email,
+        password: req.body.password,
+        admin: false,
+      },
+    });
+    res.json(newUser);
   } catch (e) {
     console.log(e);
   }
