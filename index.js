@@ -16,12 +16,10 @@ async function main(params) {
   app.use(express.json());
   app.use(express.urlencoded());
   app.set("view engine", "pug");
-
   app.get("/", async (req, res) => {
     res.render("login");
   });
   app.get("/main", async (req, res) => {
-    console.log(logRegService.auth);
     if (logRegService.auth) res.render("main", { array: data });
   });
   app.get("/register", async (req, res) => {
@@ -77,4 +75,12 @@ async function main(params) {
   });
 }
 
-main();
+main()
+  .then(async () => {
+    await logRegService.prisma.$connect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

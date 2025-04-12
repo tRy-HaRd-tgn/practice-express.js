@@ -6,7 +6,12 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "prisma generate"
+  },
+  "exports": {
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.js"
   },
   "jsx": "react",
   "author": "sam",
@@ -24,7 +29,8 @@
     "preact-render-to-string": "^6.5.13",
     "pug": "^3.0.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "jest": "^29.7.0",

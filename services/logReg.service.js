@@ -1,6 +1,9 @@
 import * as readline from "readline";
 import * as fs from "fs";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 class LogRegService {
+  prisma = prisma;
   errase(appPath) {
     for (let i = appPath.length - 1; i >= 0; i--) {
       if (appPath[i] == "\\") {
@@ -9,6 +12,9 @@ class LogRegService {
       }
     }
     return appPath;
+  }
+  createUser(user) {
+    return this.prisma.user.create({ data: user });
   }
   async createFile(dir) {
     fs.appendFile(dir, "", function (err) {
