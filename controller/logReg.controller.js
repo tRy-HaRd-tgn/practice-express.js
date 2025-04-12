@@ -5,6 +5,17 @@ const router = Router();
 
 router.post("/login/request", async function (req, res) {
   try {
+    const user = await logRegService.prisma.user.findUnique({
+      where: { username: req.body.email },
+    });
+    console.log(user);
+    if (user.password == req.body.password) {
+      logRegService.auth = true;
+      logRegService.admin = user.admin;
+      res.json({ message: "авторизация прошла успешно" });
+    } else {
+      res.json({ message: "такого пользователя не существует" }).status(500);
+    }
   } catch (e) {
     console.log(e);
     logRegService.auth = false;
