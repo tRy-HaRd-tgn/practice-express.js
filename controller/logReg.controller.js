@@ -8,7 +8,6 @@ router.post("/login/request", async function (req, res) {
     const user = await logRegService.prisma.user.findUnique({
       where: { username: req.body.email },
     });
-    console.log(user);
     if (user.password == req.body.password) {
       logRegService.auth = true;
       logRegService.admin = user.admin;

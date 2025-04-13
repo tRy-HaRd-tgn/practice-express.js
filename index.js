@@ -3,7 +3,6 @@ webPreferences: {
   nodeIntegration: true;
 }
 import { logRegService } from "./services/logReg.service.js";
-import * as fs from "fs";
 import { LogRegRouter } from "./controller/logReg.controller.js";
 import dotenv from "dotenv";
 
@@ -20,7 +19,6 @@ async function main(params) {
   });
   app.get("/main", async (req, res) => {
     const data = await logRegService.prisma.test.findMany({});
-    console.log(data);
     if (logRegService.auth) {
       res.render("main", { array: data });
     } else {
@@ -30,9 +28,15 @@ async function main(params) {
   app.get("/register", async (req, res) => {
     res.render("register");
   });
-  app.get("/result", function (req, res) {
+  app.get("/result", async function (req, res) {
     if (logRegService.auth && logRegService.admin) {
-      res.render("result", { array: logRegService.array });
+      let array = await logRegService.prisma.result.findMany({});
+      for (let i = 0; i < array.length; i++) {
+        array[i] = JSON.stringify(array[i].meta);
+      }
+      console.log(array);
+
+      res.render("result", { array: array });
     } else {
       res.json({ message: "у вас недостаточно прав" }).status(500);
     }
@@ -40,33 +44,32 @@ async function main(params) {
   app.post("/register/request", LogRegRouter);
   app.post("/login/request", LogRegRouter);
   app.post("/request", async (req, res) => {
-    let i = 0;
-    for (var key in obj) {
-      obj[key] = req.body[i];
-      ++i;
+    try {
+      var mark = 0;
+      var obj = {};
+      for (var i = 0; i < Object.values(req.body).length; i++) {
+        const temp = await logRegService.prisma.test.findFirst({
+          where: { id: i + 1 },
+        });
+        if (temp.answer != "") {
+          console.log(temp.answer);
+          if (req.body[i] === temp.answer) {
+            mark++;
+          }
+        }
+        const name = temp.text;
+        obj[name] = req.body[i];
+      }
+    } catch (e) {
+      res.json({ message: "ошибка" }).status(500);
     }
-    if (
-      obj.relation == "да" ||
-      obj.relation == "обожаю" ||
-      obj.relation == "люблю" ||
-      obj.relation == "поддерживаю" ||
-      obj.relation == "yes"
-    ) {
-      obj["mark"] = 1;
-    } else {
-      obj["mark"] = 0;
-    }
-    console.log(req.body);
-    createFile("result.txt");
-    appPath += "result.txt";
-    fs.appendFileSync(appPath, JSON.stringify(obj), function (err) {
-      if (err) throw err;
-      console.log("Saved!");
+    obj.mark = mark;
+
+    const test = await logRegService.prisma.result.create({
+      data: {
+        meta: obj,
+      },
     });
-    fs.appendFileSync(appPath, "\n", function (err) {
-      if (err) throw err;
-    });
-    appPath = errase(appPath);
     res.json({ message: "success" }).status(200);
   });
   app.listen(process.env.SERVER_PORT, () => {
