@@ -1,8 +1,11 @@
-const validateValue = (value) => {
-  if (value > 50) {
+import { logRegService } from "../services/logReg.service";
+const validateCreateTest = (data) => {
+  try {
+    const user = logRegService.prisma.test.create({ data: data });
     return true;
+  } catch (e) {
+    return e;
   }
-  return false;
 };
 
-module.exports = validateValue;
+module.exports = validateCreateTest;

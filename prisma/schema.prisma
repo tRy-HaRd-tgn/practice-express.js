@@ -17,4 +17,10 @@ model User {
 model Test {
   id   Int    @id @default(autoincrement())
   text String @unique
+  answer String 
+}
+
+model Result{
+  id Int @id @default(autoincrement())
+  meta Json?
 }

@@ -16,6 +16,9 @@ class LogRegService {
   createUser(user) {
     return this.prisma.user.create({ data: user });
   }
+  createTest(test) {
+    return this.prisma.test.create({ data: test });
+  }
   async createFile(dir) {
     fs.appendFile(dir, "", function (err) {
       if (err) throw err;

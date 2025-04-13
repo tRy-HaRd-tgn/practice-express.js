@@ -4,7 +4,6 @@ webPreferences: {
 }
 import { logRegService } from "./services/logReg.service.js";
 import * as fs from "fs";
-import { data } from "./data/index.js";
 import { LogRegRouter } from "./controller/logReg.controller.js";
 import dotenv from "dotenv";
 
@@ -20,7 +19,13 @@ async function main(params) {
     res.render("login");
   });
   app.get("/main", async (req, res) => {
-    if (logRegService.auth) res.render("main", { array: data });
+    const data = await logRegService.prisma.test.findMany({});
+    console.log(data);
+    if (logRegService.auth) {
+      res.render("main", { array: data });
+    } else {
+      res.json({ message: "авторизация необходима" }).status(500);
+    }
   });
   app.get("/register", async (req, res) => {
     res.render("register");

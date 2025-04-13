@@ -1,5 +1,5 @@
-const validateValue = require("./validateValue");
+const validateCreateTest = require("./validateCreateTest");
 
 test("валидация значения", () => {
-  expect(validateValue(55)).toBe(true);
+  expect(validateCreateTest({ text: "ваше имя" })).toBe(true);
 });
